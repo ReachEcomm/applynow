@@ -90,15 +90,27 @@ export default function ApplyForm() {
     setSubmitting(true);
     try {
       const payload = { ...form, amount: form.amount ? Number(form.amount) : null };
-  const res = await fetch("api/submit", {
+      const apiUrl = new URL("api/submit", window.location.href).href; // ensures basePath is preserved
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        mode: "cors",
       });
-      if (!res.ok) throw new Error("Submission failed");
+      if (!res.ok) {
+        let bodyText = "";
+        try {
+          bodyText = await res.text();
+        } catch (e) {
+          /* ignore */
+        }
+        // attach server response to errors to help debugging
+        throw new Error(`Submission failed: ${res.status} ${res.statusText} ${bodyText}`);
+      }
   // redirect to thank-you (relative path so basePath is preserved)
   router.push("thank-you");
     } catch (err) {
+      console.error('Submit error', err);
       setErrors((e) => ({ ...e, submit: (err as Error).message || "Submission error" }));
     } finally {
       setSubmitting(false);
