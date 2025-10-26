@@ -17,7 +17,11 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - name: Install dependencies (legacy-peer-deps)
-        run: npm install --no-audit --no-fund --legacy-peer-deps
+      - name: Install CI test deps
+        run: |
+          cd ci-tests
+          npm ci --no-audit --no-fund --legacy-peer-deps
       - name: Run tests
-        run: npm test
+        run: |
+          cd ci-tests
+          npm test
