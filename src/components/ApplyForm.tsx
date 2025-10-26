@@ -90,14 +90,14 @@ export default function ApplyForm() {
     setSubmitting(true);
     try {
       const payload = { ...form, amount: form.amount ? Number(form.amount) : null };
-      const res = await fetch("/api/submit", {
+  const res = await fetch("api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Submission failed");
-      // redirect to thank-you
-      router.push("/thank-you");
+  // redirect to thank-you (relative path so basePath is preserved)
+  router.push("thank-you");
     } catch (err) {
       setErrors((e) => ({ ...e, submit: (err as Error).message || "Submission error" }));
     } finally {
